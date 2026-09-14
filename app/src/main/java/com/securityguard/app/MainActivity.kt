@@ -218,7 +218,7 @@ fun MainApp(initialRoundId: Long = -1L, onLock:()->Unit){
             2->Rounds()
             3->Salary()
             else->More(onLock=onLock,onRefresh={refresh++})
-        }}}
+        }}
     }
     if(showShiftSelection) ShiftSelectionDialog(onDismiss={showShiftSelection=false},onSelected={refresh++;showShiftSelection=false})
 }
