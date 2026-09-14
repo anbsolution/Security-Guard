@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.securityguard.app
 
 import android.Manifest
@@ -347,7 +349,7 @@ private fun AddShiftDialog(onDismiss:()->Unit,onSaved:()->Unit){
     }},confirmButton={Button(onClick={scope.launch{try{manager.addShift(name,type,start,end,cross,rounds);HapticManager.success();AudioManager.emit(AudioEvent.Success);onSaved()}catch(e:Exception){error=e.message?:"Invalid shift"}}},enabled=name.isNotBlank()){Text("Save")}},dismissButton={TextButton(onClick=onDismiss){Text("Cancel")}})
 }
 
-@Composable fun CardItem(title:String,sub:String,icon:String,onClick:()->Unit={}){Card(Modifier.fillMaxWidth().padding(vertical=6.dp),onClick=onClick){Row(Modifier.padding(18.dp),verticalAlignment=Alignment.CenterVertically){Text(icon,fontSize=28.sp);Spacer(Modifier.width(14.dp));Column{Text(title,fontSize=18.sp);Text(sub,fontSize=14.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}}}}
+@Composable fun CardItem(title:String,sub:String,icon:String,onClick:()->Unit={}){Card(onClick=onClick, modifier=Modifier.fillMaxWidth().padding(vertical=6.dp)){Row(Modifier.padding(18.dp),verticalAlignment=Alignment.CenterVertically){Text(icon,fontSize=28.sp);Spacer(Modifier.width(14.dp));Column{Text(title,fontSize=18.sp);Text(sub,fontSize=14.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}}}}
 @Composable
 fun Attendance(){
     val context = LocalContext.current
