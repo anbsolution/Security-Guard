@@ -81,7 +81,7 @@ private fun SecurityGuardRoot(openRoundId: Long = -1L, requestNotifications: () 
     MaterialTheme {
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            !setupComplete -> OnboardingScreen(onFinished = { setupComplete = true; unlocked = true })
+            !setupComplete -> OnboardingScreen(requestNotifications = requestNotifications, onFinished = { setupComplete = true; unlocked = true })
             !unlocked -> LockScreen(onUnlock = { unlocked = true })
             else -> MainApp(initialRoundId = openRoundId, onLock = { unlocked = false })
         }
@@ -89,7 +89,7 @@ private fun SecurityGuardRoot(openRoundId: Long = -1L, requestNotifications: () 
 }
 
 @Composable
-private fun OnboardingScreen(onFinished: () -> Unit) {
+private fun OnboardingScreen(requestNotifications: () -> Unit, onFinished: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as SecurityGuardApplication
     val prefs = remember { app.getSharedPreferences("onboarding", Context.MODE_PRIVATE) }
@@ -303,7 +303,7 @@ private fun ShiftSelectionDialog(onDismiss:()->Unit,onSelected:()->Unit){
             }}
             if(error!=null)Text(error!!,color=MaterialTheme.colorScheme.error)
         }
-    },confirmButton={Button(onClick={scope.launch{try{manager.selectTodayShift(selectedId?:error("Select a shift"));HapticManager.success();AudioManager.emit(AudioEvent.Success);onSelected()}catch(e:Exception){error=e.message}}},enabled=selectedId!=null){Text("Select")}},dismissButton={TextButton(onClick=onDismiss){Text("Cancel")}})
+    },confirmButton={Button(onClick={scope.launch{try{manager.selectTodayShift(selectedId ?: return@launch);HapticManager.success();AudioManager.emit(AudioEvent.Success);onSelected()}catch(e:Exception){error=e.message}}},enabled=selectedId!=null){Text("Select")}},dismissButton={TextButton(onClick=onDismiss){Text("Cancel")}})
 }
 
 @Composable
@@ -356,6 +356,7 @@ fun Attendance(){
     var refresh by remember { mutableIntStateOf(0) }
     var records by remember(refresh) { mutableStateOf<List<AttendanceEntity>>(emptyList()) }
     var sessions by remember(refresh) { mutableStateOf<List<ShiftSessionEntity>>(emptyList()) }
+    var shiftsById by remember(refresh) { mutableStateOf<Map<Long, ShiftEntity>>(emptyMap()) }
     var showManual by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
     val today = LocalDate.now()
@@ -366,6 +367,9 @@ fun Attendance(){
         records = withContext(Dispatchers.IO) { app.database.attendanceDao().range(monthStart, monthEnd) }
         sessions = withContext(Dispatchers.IO) {
             app.database.shiftSessionDao().forDate(today.toString())
+        }
+        shiftsById = withContext(Dispatchers.IO) {
+            app.database.shiftDao().active().associateBy { it.id }
         }
     }
 
@@ -388,7 +392,7 @@ fun Attendance(){
                         Text("No shift session recorded today.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
                         sessions.forEach { session ->
-                            val shift = app.database.shiftDao().get(session.shiftId)
+                            val shift = shiftsById[session.shiftId]
                             Text("${shift?.name ?: "Shift"} • ${session.sessionType} • ${session.status}")
                             Text("Check-in: ${formatDateTime(session.actualCheckIn)}   Check-out: ${formatDateTime(session.actualCheckOut)}",
                                 fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -6,9 +6,10 @@ import com.securityguard.app.core.database.ShiftCheckpointDao
 import com.securityguard.app.core.database.ShiftCheckpointEntity
 
 class CheckpointManager(private val checkpoints: CheckpointDao, private val assignments: ShiftCheckpointDao) {
-    suspend fun add(name: String, order: Int = checkpoints.active().size + 1, now: Long = System.currentTimeMillis()): Long {
+    suspend fun add(name: String, order: Int? = null, now: Long = System.currentTimeMillis()): Long {
+        val actualOrder = order ?: (checkpoints.active().size + 1)
         require(name.isNotBlank()) { "Checkpoint name is required" }
-        return checkpoints.insert(CheckpointEntity(name = name.trim(), displayOrder = order, active = true, createdAt = now, updatedAt = now))
+        return checkpoints.insert(CheckpointEntity(name = name.trim(), displayOrder = actualOrder, active = true, createdAt = now, updatedAt = now))
     }
 
     suspend fun assignToShift(shiftId: Long, checkpointId: Long, order: Int, active: Boolean = true): Long =

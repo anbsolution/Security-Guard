@@ -20,9 +20,10 @@ class BootCompletedReceiver : BroadcastReceiver() {
                 val app = context.applicationContext as SecurityGuardApplication
                 val date = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate().toString()
                 val scheduler = RoundAlertScheduler(context)
+                val shiftsById = app.database.shiftDao().active().associateBy { it.id }
                 app.database.shiftSessionDao().forDate(date).forEach { session ->
-                    val shift = app.database.shiftDao().get(session.shiftId) ?: return@forEach
-                    scheduler.scheduleAll(app.database.roundDao().forSession(session.id), shift)
+                    val rounds = app.database.roundDao().forSession(session.id)
+                    scheduler.scheduleAll(rounds, shiftsById)
                 }
             } finally { pending.finish() }
         }
