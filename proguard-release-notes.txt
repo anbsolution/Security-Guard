@@ -1,0 +1,7 @@
+Security Guard release R8/ProGuard policy
+
+1. Keep Room entities, DAOs and database classes required by Room.
+2. Keep serialization/backup model classes required by the selected serializer.
+3. Keep Android BroadcastReceiver classes used for round scheduling.
+4. Do not add broad `-dontwarn` or `-keep class **` rules without evidence.
+5. Verify release build with R8 enabled before distribution.
