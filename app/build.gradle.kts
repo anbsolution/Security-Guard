@@ -4,11 +4,49 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.kapt")
 }
-android { namespace = "com.securityguard.app"; compileSdk = 35
-    defaultConfig { applicationId = "com.securityguard.app"; minSdk = 26; targetSdk = 35; versionCode = 124000; versionName = "12.4.0" }
-    buildTypes { release { isMinifyEnabled = false } }
-    buildFeatures { compose = true }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
+
+kotlin {
+    jvmToolchain(17)
+}
+
+android {
+    namespace = "com.securityguard.app"
+    compileSdk = 35
+    
+    defaultConfig {
+        applicationId = "com.securityguard.app"
+        minSdk = 26
+        targetSdk = 35
+        versionCode = 124000
+        versionName = "12.4.0"
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+    
+    buildFeatures {
+        compose = true
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.room:room-runtime:2.7.0")
