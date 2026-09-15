@@ -38,12 +38,26 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build APK
-        run: gradle --no-daemon --stacktrace assembleDebug
+      - name: Restore release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > securityguard-release.jks
+          chmod 600 securityguard-release.jks
+          test -s securityguard-release.jks
 
-      - name: Upload APK
+      - name: Build signed Release APK
+        env:
+          KEYSTORE_FILE: securityguard-release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          gradle --no-daemon --stacktrace assembleRelease
+
+      - name: Upload signed APK
         uses: actions/upload-artifact@v4
         with:
-          name: SecurityGuard-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: SecurityGuard-release-apk
+          path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
