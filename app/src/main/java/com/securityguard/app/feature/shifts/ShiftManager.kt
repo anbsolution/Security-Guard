@@ -8,11 +8,27 @@ import com.securityguard.app.core.notifications.RoundAlertScheduler
 class ShiftManager(private val db: SecurityGuardDatabase) {
     suspend fun activeShifts(): List<ShiftEntity> = db.shiftDao().active()
 
-    suspend fun selectedShiftId(): Long? = db.appSettingDao().get("today_selected_shift_id")?.value?.toLongOrNull()
+    private fun todaySelectionKey(): String =
+        "today_selected_shift_id_${LocalDate.now(ZoneId.systemDefault())}"
+
+    suspend fun selectedShiftId(): Long? =
+        db.appSettingDao().get(todaySelectionKey())?.value?.toLongOrNull()
 
     suspend fun selectTodayShift(shiftId: Long) {
-        require(db.shiftDao().get(shiftId)?.active == true) { "Selected shift is not active" }
-        db.appSettingDao().put(AppSettingEntity("today_selected_shift_id", shiftId.toString(), System.currentTimeMillis()))
+        check(activeSession() == null) {
+            "Check-Out the active shift before changing today's shift"
+        }
+        require(db.shiftDao().get(shiftId)?.active == true) {
+            "Selected shift is not active"
+        }
+
+        db.appSettingDao().put(
+            AppSettingEntity(
+                todaySelectionKey(),
+                shiftId.toString(),
+                System.currentTimeMillis()
+            )
+        )
     }
 
     suspend fun activeSession(): ShiftSessionEntity? = db.shiftSessionDao().active()
