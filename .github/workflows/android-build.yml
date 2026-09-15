@@ -42,9 +42,9 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > securityguard-release.jks
-          chmod 600 securityguard-release.jks
-          test -s securityguard-release.jks
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/securityguard-release.jks
+          chmod 600 app/securityguard-release.jks
+          test -s app/securityguard-release.jks
 
       - name: Build signed Release APK
         env:
