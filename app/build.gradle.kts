@@ -23,8 +23,9 @@ android {
         applicationId = "com.securityguard.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 124000
-        versionName = "12.4.0"
+        val ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
+        versionCode = 124000 + ciRunNumber
+        versionName = if (ciRunNumber > 0) "12.4.$ciRunNumber" else "12.4.0"
     }
     
     buildTypes {
