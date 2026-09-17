@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#062a57">
+  <title data-i18n="brandTitle">SSG - Security Guard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mini">
+        <div class="brand-shield">★</div>
+        <div><b>SSG</b><span>SECURITY GUARD</span></div>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth="login" data-i18n="login">Login</button>
+        <button class="auth-tab" data-auth="signup" data-i18n="signUp">Sign Up</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <h1 data-i18n="welcomeBack">Welcome Back</h1>
+        <p data-i18n="signInSubtitle">Sign in to your Security Guard app.</p>
+        <label data-i18n="emailMobile">Email / Mobile<input id="loginId" required autocomplete="username" placeholder="Enter email or mobile"></label>
+        <label data-i18n="password">Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Enter password"></label>
+        <button class="primary-btn" type="submit" data-i18n="loginButton">LOGIN</button>
+        <div id="loginMsg" class="form-msg"></div>
+      </form>
+
+      <form id="signupForm" class="auth-form hidden">
+        <h1 data-i18n="createAccount">Create Account</h1>
+        <p data-i18n="signupSubtitle">Set up your personal SSG profile.</p>
+        <label data-i18n="fullName">Full Name<input id="signupName" required placeholder="Security Guard name"></label>
+        <label data-i18n="emailMobile">Email / Mobile<input id="signupId" required placeholder="Email or mobile"></label>
+        <label data-i18n="password">Password<input id="signupPassword" type="password" minlength="6" maxlength="10" required placeholder="6-10 characters"></label>
+        <div class="strength"><span></span><span></span><span></span></div>
+        <small id="strengthText">Password strength</small>
+        <label data-i18n="confirmPassword">Confirm Password<input id="signupConfirm" type="password" minlength="6" maxlength="10" required></label>
+        <button class="primary-btn" type="submit" data-i18n="createAccountButton">CREATE ACCOUNT</button>
+        <div id="signupMsg" class="form-msg"></div>
+      </form>
+      <small class="offline-note" data-i18n="offlineNote">Works offline • Data is stored on this device</small>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="shield">★</div>
+        <div><strong data-i18n="brandTitle">SSG - Security Guard</strong><small data-i18n="tagline">Simple • Smart • Complete</small></div>
+      </div>
+      <div class="top-actions">
+        <span class="pill">🇮🇳 Made for India</span>
+        <button id="logoutBtn" class="logout-btn" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section id="dashboard" class="page active">
+        <div class="page-title"><div><h2 data-i18n="dashboard">Dashboard</h2><p id="todayText"></p></div><div class="live-dot">● LIVE</div></div>
+        <div class="grid dashboard-grid">
+          <div class="card date-card"><div class="big-date" id="bigDate"></div><b id="dayName"></b></div>
+          <div class="card shift-card"><h3 data-i18n="shiftSelection">Shift Selection</h3><div class="shift-row">
+            <label><input type="radio" name="shift" value="day"> Day Shift</label>
+            <label><input type="radio" name="shift" value="night"> Night Shift</label>
+          </div><span id="patrolBadge" class="badge" data-i18n="patrolDisabled">Patrol Disabled</span></div>
+          <div class="card"><h3 data-i18n="dutySite">Duty Site</h3><input id="siteInput" class="input" value="SSD Farm Hasanpur"></div>
+        </div>
+
+        <div class="grid punch-grid">
+          <div class="card punch-card punch-in"><button id="punchIn" class="big-action">▶ <span data-i18n="punchIn">PUNCH IN</span></button><p>Last Punch: <b id="lastPunch">--:--</b></p></div>
+          <div class="card timer-card"><div class="clock">◷</div><strong id="dutyTimer">00:00:00</strong><p>Status: <b id="dutyStatus" data-i18n="ready">Ready</b></p></div>
+          <div class="card punch-card punch-out"><button id="punchOut" class="big-action">■ <span data-i18n="punchOut">PUNCH OUT</span></button><p>Total Duty Today: <b id="totalDuty">00:00</b></p></div>
+        </div>
+
+        <div class="grid lower-grid">
+          <div class="card plan"><h3 data-i18n="todaysPlan">Today's Plan</h3>
+            <label><input type="checkbox" checked> Gate Check</label>
+            <label><input type="checkbox" checked> Patrolling</label>
+            <label><input type="checkbox" checked> Visitor Entry</label>
+            <label><input type="checkbox" checked> Area Monitoring</label>
+          </div>
+          <div class="card status-card"><h3 data-i18n="todaysStatus">Today's Status</h3><div class="person-icon">●</div><strong id="statusText" data-i18n="notPunched">Not Punched</strong><p data-i18n="dutyNotStarted">Duty not started</p></div>
+          <div class="card patrol-card"><h3 data-i18n="patrol">Patrol <span data-i18n="nightOnly">(Night Only)</span></h3><div class="patrol-symbol">⌖</div><button id="patrolBtn" class="secondary-btn" disabled data-i18n="goToPatrol">Go to Patrol</button><p>Round: <b id="roundCount">0 / 0</b></p></div>
+        </div>
+      </section>
+
+      <section id="attendance" class="page">
+        <div class="page-title"><div><h2 data-i18n="attendance">Attendance</h2><p data-i18n="monthlyCalendar">Monthly calendar & attendance filing</p></div><button id="monthReset" class="secondary-btn" data-i18n="currentMonth">Current Month</button></div>
+        <div class="attendance-layout">
+          <div class="card calendar-card"><div class="calendar-head"><button id="prevMonth">‹</button><h3 id="monthTitle"></h3><button id="nextMonth">›</button></div><div class="legend"><span class="p">Present</span><span class="a">Absent</span><span class="l">Leave</span><span class="o">Off</span><span class="h">Holiday</span><span class="i">Incomplete</span></div><div id="calendar" class="calendar"></div></div>
+          <div class="card summary"><h3 data-i18n="monthlySummary">Monthly Summary</h3><div id="summaryRows"></div><hr><p>Total Days <b id="sumDays">30</b></p><p>Worked Hours <b id="sumHours">0.00</b></p><p>OT Hours <b id="sumOT">0.00</b></p></div>
+        </div>
+        <div class="card table-card"><h3 data-i18n="manualAttendance">Manual Attendance Filing <small data-i18n="editBelow">(Edit below)</small></h3><div class="table-wrap"><table><thead><tr><th data-i18n="date">Date</th><th data-i18n="day">Day</th><th data-i18n="status">Status</th><th data-i18n="punchInTable">Punch IN</th><th data-i18n="punchOutTable">Punch OUT</th><th data-i18n="breakMin">Break (Min)</th><th data-i18n="workHrs">Work Hrs</th><th data-i18n="otHrs">OT Hrs</th><th data-i18n="note">Note</th></tr></thead><tbody id="attendanceBody"></tbody></table></div></div>
+      </section>
+
+      <section id="salary" class="page">
+        <div class="page-title"><div><h2 data-i18n="salarySlip">Salary Slip</h2><p data-i18n="automaticMonthlyCalculation">Automatic monthly calculation</p></div><button id="printSalary" class="secondary-btn">🖨 Print / PDF</button></div>
+        <div class="salary-slip card">
+          <div class="slip-head"><div class="logo-box">SSG</div><div><h2 data-i18n="salarySlip">Salary Slip</h2><b id="salaryMonth"></b></div><span>Worker ID <b id="workerId">SG001</b></span></div>
+          <div class="salary-columns">
+            <div><h3 data-i18n="personalDetails">Personal Details</h3><div id="personalDetails"></div></div>
+            <div><h3 data-i18n="workingDetails">Working Details</h3><div id="workingDetails"></div><h3 class="earn-title" data-i18n="earnings">Earnings</h3><div id="earnings"></div></div>
+            <div><h3 data-i18n="deductions">Deductions (As per Indian Law)</h3><div id="deductions"></div><div class="net-box">Net Salary <b id="netSalary">₹0.00</b></div><h3 data-i18n="employerContribution">Employer Contribution (Info)</h3><div id="employer"></div></div>
+          </div>
+          <p class="words">Amount in Words: <b id="amountWords">Rupees Zero Only</b></p>
+        </div>
+      </section>
+
+      <section id="patrol" class="page">
+        <div class="page-title"><div><h2 data-i18n="patrol">Patrol</h2><p>Night-shift round management</p></div></div>
+        <div class="grid patrol-page-grid">
+          <div class="card"><h3 data-i18n="createEditRound">Create / Edit Round</h3><label data-i18n="roundName">Round Name<input id="roundName" class="input" value="Night Round"></label><label data-i18n="targetRounds">Target Rounds<input id="roundTarget" class="input" type="number" min="1" value="4"></label><button id="saveRound" class="primary-btn" data-i18n="saveRound">SAVE ROUND</button></div>
+          <div class="card patrol-progress"><div class="patrol-symbol large">⌖</div><h2 id="roundTitle">Night Round</h2><div class="progress"><span id="roundProgress"></span></div><strong id="roundProgressText">0 / 4</strong><button id="completeRound" class="secondary-btn" data-i18n="completeRound">Complete Round</button></div>
+        </div>
+      </section>
+
+      <section id="reports" class="page">
+        <div class="page-title"><div><h2 data-i18n="reports">Reports</h2><p>Daily report sharing</p></div></div>
+        <div class="grid report-grid">
+          <div class="card"><h3 data-i18n="dailyReport">Daily Report</h3><textarea id="reportText" rows="12"></textarea><button id="whatsappBtn" class="primary-btn" data-i18n="shareWhatsApp">Share on WhatsApp</button></div>
+          <div class="card"><h3 data-i18n="reportPreview">Report Preview</h3><pre id="reportPreview"></pre></div>
+        </div>
+      </section>
+
+      <section id="profile" class="page">
+        <div class="page-title"><div><h2 data-i18n="profile">Profile</h2><p>Personal, bank and statutory details</p></div><button id="saveProfile" class="primary-btn small-btn" data-i18n="saveProfile">Save Profile</button></div>
+        <div class="profile-grid">
+          <div class="card"><h3 data-i18n="personalInformation">Personal Information</h3><label data-i18n="name">Name<input id="pName" class="input"></label><label>Employee ID<input id="pId" class="input"></label><label>Date of Birth<input id="pDob" class="input" type="date"></label><label>Mobile Number<input id="pMobile" class="input"></label><label>Address<input id="pAddress" class="input"></label></div>
+          <div class="card"><h3 data-i18n="bankDetails">Bank Details</h3><label>Bank Name<input id="pBank" class="input"></label><label>Account Number<input id="pAccount" class="input"></label><label>IFSC Code<input id="pIfsc" class="input"></label><label>Account Holder<input id="pHolder" class="input"></label></div>
+          <div class="card"><h3 data-i18n="employmentDetails">Employment Details</h3><label data-i18n="joiningDate">Joining Date<input id="pJoin" class="input" type="date"></label><label data-i18n="designation">Designation<input id="pDesignation" class="input"></label><label data-i18n="dutySite">Duty Site<input id="pSite" class="input"></label><label>Shift Type<select id="pShift" class="input"><option data-i18n="day">Day</option><option>Night</option></select></label></div>
+          <div class="card salary-input"><h3 data-i18n="monthlySalary">Monthly Salary <small data-i18n="onlyInput">(Only input)</small></h3><input id="pSalary" class="salary-field" type="number" min="0" step="0.01"></div>
+        </div>
+      </section>
+
+      <section id="settings" class="page">
+        <div class="page-title"><div><h2 data-i18n="settings">Settings</h2><p data-i18n="applicationPreferences">Application preferences</p></div></div>
+        <div class="card language-card"><h3 data-i18n="language">Language</h3><label data-i18n="selectLanguage">Select Language<select id="languageSelect" class="input"><option value="en">English</option><option value="hi">हिन्दी</option><option value="hinglish">Hinglish</option></select></label><p class="language-note" data-i18n="languageNote">Change language anytime. Your saved data stays unchanged.</p></div>
+          <div class="grid settings-grid">
+          <div class="card"><h3 data-i18n="workRules">Work Rules</h3><label data-i18n="workHoursDay">Work Hours / Day<input id="sHours" class="input" type="number" value="12"></label><label data-i18n="autoPresent">Auto Present After (Hours)<input id="sAuto" class="input" type="number" value="12"></label><label data-i18n="breakTime">Break Time (Minutes)<input id="sBreak" class="input" type="number" value="30"></label></div>
+          <div class="card"><h3 data-i18n="data">Data</h3><button id="exportBtn" class="secondary-btn" data-i18n="exportBackup">Export Backup JSON</button><button id="importBtn" class="secondary-btn" data-i18n="importBackup">Import Backup JSON</button><button id="resetBtn" class="danger-btn" data-i18n="resetData">Reset App Data</button><input id="importFile" type="file" accept=".json" hidden></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-page="dashboard">⌂<span data-i18n="dashboard">Dashboard</span></button>
+      <button class="nav-btn" data-page="attendance">▦<span data-i18n="attendance">Attendance</span></button>
+      <button class="nav-btn" data-page="salary">₹<span data-i18n="salary">Salary</span></button>
+      <button class="nav-btn" data-page="patrol">⌖<span data-i18n="patrol">Patrol</span></button>
+      <button class="nav-btn" data-page="reports">▥<span data-i18n="reports">Reports</span></button>
+      <button class="nav-btn" data-page="profile">●<span data-i18n="profile">Profile</span></button>
+      <button class="nav-btn" data-page="settings">⚙<span data-i18n="settings">Settings</span></button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="js/i18n.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
